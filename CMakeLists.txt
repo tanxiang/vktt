@@ -13,6 +13,7 @@ pkg_check_modules(WL wayland-client)
 
 add_executable(vkt
 	waylandsuf.cc
+	vksuf.cc
 	)
 
 target_link_libraries(vkt
