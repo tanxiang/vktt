@@ -1,74 +1,63 @@
 #include "waylandsuf.hh"
+#define VK_USE_PLATFORM_WAYLAND_KHR
 #include "vksuf.hh"
 
-int main(int argc, char **argv) {
+namespace tt{
 
-#ifdef VK_Validation
-		const char * extension_name[3] 
-#else
-		const char * extension_name[2] 
-#endif
-		{
-			VK_KHR_SURFACE_EXTENSION_NAME,
-			VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME,
-#ifdef VK_Validation
-			VK_EXT_DEBUG_REPORT_EXTENSION_NAME
-#endif
-		};
-		
-	vk::ApplicationInfo appinfo{
-		"vktest",
-		VK_MAKE_VERSION(0, 1, 5),
-		"Vulkan EG",
-		VK_MAKE_VERSION(0, 1, 5),
-		VK_MAKE_VERSION(1, 0, 5)
-	};
-	vk::InstanceCreateInfo instace_createinfo{
-		vk::InstanceCreateFlags(),
-		&appinfo,
-		0,
-		nullptr,
-		sizeof(extension_name)/sizeof(const char *),
-		extension_name
-	};
-	auto instance=vk::createInstance(instace_createinfo);
-	toolkit::Display display;
-
-	auto window{display.CreateWindow()};
-	vk::WaylandSurfaceCreateInfoKHR surface_createinfo{
+vk::SurfaceKHR Instance::createSurface(wl_display *display,wl_surface *surface){
+	vk::WaylandSurfaceCreateInfoKHR surfaceCreateInfo{
 		vk::WaylandSurfaceCreateFlagsKHR{},
-		display.get(),
-		window.get()
+		display,
+		surface
 	};
-	auto surface = instance.createWaylandSurfaceKHR(surface_createinfo);
-	std::cout<<"vk surface get:"<<surface<<std::endl;
-	auto pdevs = instance.enumeratePhysicalDevices();
-	for(auto& pdev:pdevs){
-		auto devps = pdev.getProperties();
-		std::cout<<"name:"<<devps.deviceName<<"\n\ttype:"<<vk::to_string(devps.deviceType)<<std::endl;	
-		auto devqfps = pdev.getQueueFamilyProperties();
-		int32_t i = 0;
-		for (; i < devqfps.size(); ++i) {
-			std::cout<<vk::to_string(devqfps[i].queueFlags)<<std::endl;
-			if(devqfps[i].queueFlags & vk::QueueFlagBits::eGraphics){
-				if(pdev.getSurfaceSupportKHR(i,surface)){
+	return createWaylandSurfaceKHR(surfaceCreateInfo);
+}
+vk::PhysicalDevice Instance::findSupportPhysicalDevices(vk::SurfaceKHR& surface){
+	auto physicalDevices = enumeratePhysicalDevices();
+	for(auto& physicalDevice:physicalDevices){
+		auto physicalDeviceProperties=physicalDevice.getProperties();
+		std::cout<<"name:"<<physicalDeviceProperties.deviceName<<
+			"\n\ttype:"<<vk::to_string(physicalDeviceProperties.deviceType)<<std::endl;
+		auto physicalDeviceQueueFamilyProperties = physicalDevice.getQueueFamilyProperties();
+		uint32_t i = 0;
+		for (; i < physicalDeviceQueueFamilyProperties.size(); ++i) {
+			std::cout<<vk::to_string(physicalDeviceQueueFamilyProperties[i].queueFlags)<<std::endl;
+			if(physicalDeviceQueueFamilyProperties[i].queueFlags & vk::QueueFlagBits::eGraphics){
+				if(physicalDevice.getSurfaceSupportKHR(i,surface)){
 					std::cout<<"getSurfaceSupportKHR true"<<std::endl;
 					break;
 				}
 			}
 		}
-		auto formats = pdev.getSurfaceFormatsKHR(surface);
+		return physicalDevice;
+	}
+	throw std::logic_error( "Support PhysicalDevice not found!" );
+}
+
+}//namespace tt
+
+int main(int argc, char **argv) {
+	toolkit::Display display;
+	auto window{display.CreateWindow()};
+
+	auto instance=tt::createInstance();
+	auto surface = instance.createSurface(display.get(),window.get());
+
+	std::cout<<"vk surface get:"<<surface<<std::endl;
+	auto physicalDevice = instance.findSupportPhysicalDevices(surface);
+
+		auto formats = physicalDevice.getSurfaceFormatsKHR(surface);
 		for(auto& format:formats){
 			std::cout<<vk::to_string(format.format)<<':'<<vk::to_string(format.colorSpace)<<std::endl;
 
 			float queue_priorities[1] = { 0.0 };
 			vk::DeviceQueueCreateInfo dc_q_info;
-			dc_q_info.setQueueFamilyIndex(i).setQueueCount(1).setPQueuePriorities(queue_priorities);
+			dc_q_info.setQueueFamilyIndex(1).setQueueCount(1).setPQueuePriorities(queue_priorities);
 			std::array<const char *,1> extname{VK_KHR_SWAPCHAIN_EXTENSION_NAME};
 			vk::DeviceCreateInfo dc_info;
 			dc_info.setQueueCreateInfoCount(1).setPQueueCreateInfos(&dc_q_info).setEnabledExtensionCount(extname.size()).setPpEnabledExtensionNames(extname.data());
 			vk::SwapchainCreateInfoKHR scc_info;
-			auto dev = pdev.createDevice(dc_info);
+			auto dev = physicalDevice.createDevice(dc_info);
 			vk::SwapchainCreateInfoKHR sc_info;
 			sc_info.setSurface(surface).setMinImageCount(1).setImageFormat(format.format).setImageColorSpace(format.colorSpace)
 				.setImageExtent(vk::Extent2D{1024,768}).setImageArrayLayers(1).setImageUsage(vk::ImageUsageFlagBits::eColorAttachment);
@@ -124,10 +113,6 @@ int main(int argc, char **argv) {
 			auto fb = dev.createFramebuffer(fbCreateInfo);
 			
 		}
-
-	}
-	
-
 	
 	//auto formats = instance.get_format(surface);
 
