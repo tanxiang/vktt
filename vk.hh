@@ -1,12 +1,19 @@
 #include "vulkan.hpp"
 #include <utility>
 namespace tt{
+class PhysicalDevice:public vk::PhysicalDevice{
+public:
+	PhysicalDevice(vk::PhysicalDevice&& physicalDevice):vk::PhysicalDevice{std::move(physicalDevice)}{
+	}
+	vk::Device createDeviceHelper(vk::SurfaceKHR& surface);
+};
+
 class Instance:public vk::Instance{
 public:
-	Instance(vk::Instance &&instance):vk::Instance{std::move(instance)}{
+	Instance(vk::Instance&& instance):vk::Instance{std::move(instance)}{
 	}
 	vk::SurfaceKHR createSurface(wl_display *display,wl_surface *surface);
-	vk::PhysicalDevice findSupportPhysicalDevices(vk::SurfaceKHR& surface);
+	PhysicalDevice findSupportPhysicalDevices(vk::SurfaceKHR& surface);
 };
 
 auto createInstance(){
@@ -23,9 +30,9 @@ auto createInstance(){
 #endif
 	};
 	vk::ApplicationInfo appInfo{
-		"vktest",
+		"vktt",
 		VK_MAKE_VERSION(0, 1, 5),
-		"Vulkan EG",
+		"vktt",
 		VK_MAKE_VERSION(0, 1, 5),
 		VK_MAKE_VERSION(1, 0, 5)
 	};

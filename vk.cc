@@ -1,8 +1,23 @@
 #include "waylandsuf.hh"
 #define VK_USE_PLATFORM_WAYLAND_KHR
-#include "vksuf.hh"
+#include "vk.hh"
 
 namespace tt{
+
+vk::Device PhysicalDevice::createDeviceHelper(vk::SurfaceKHR& surface){
+	auto surfaceFormats = getSurfaceFormatsKHR(surface);
+	for(auto& surfaceFormat:surfaceFormats){
+		std::cout<<vk::to_string(surfaceFormat.format)<<':'<<vk::to_string(surfaceFormat.colorSpace)<<std::endl;
+		float queue_priorities[1] = { 0.0 };
+		vk::DeviceQueueCreateInfo dc_q_info;
+		dc_q_info.setQueueFamilyIndex(1).setQueueCount(1).setPQueuePriorities(queue_priorities);
+		std::array<const char *,1> extname{VK_KHR_SWAPCHAIN_EXTENSION_NAME};
+		vk::DeviceCreateInfo dc_info;
+		dc_info.setQueueCreateInfoCount(1).setPQueueCreateInfos(&dc_q_info).setEnabledExtensionCount(extname.size()).setPpEnabledExtensionNames(extname.data());
+		vk::SwapchainCreateInfoKHR scc_info;
+		return createDevice(dc_info);
+	}
+}
 
 vk::SurfaceKHR Instance::createSurface(wl_display *display,wl_surface *surface){
 	vk::WaylandSurfaceCreateInfoKHR surfaceCreateInfo{
@@ -12,7 +27,8 @@ vk::SurfaceKHR Instance::createSurface(wl_display *display,wl_surface *surface){
 	};
 	return createWaylandSurfaceKHR(surfaceCreateInfo);
 }
-vk::PhysicalDevice Instance::findSupportPhysicalDevices(vk::SurfaceKHR& surface){
+
+PhysicalDevice Instance::findSupportPhysicalDevices(vk::SurfaceKHR& surface){
 	auto physicalDevices = enumeratePhysicalDevices();
 	for(auto& physicalDevice:physicalDevices){
 		auto physicalDeviceProperties=physicalDevice.getProperties();
@@ -29,7 +45,7 @@ vk::PhysicalDevice Instance::findSupportPhysicalDevices(vk::SurfaceKHR& surface)
 				}
 			}
 		}
-		return physicalDevice;
+		return PhysicalDevice{std::move(physicalDevice)};
 	}
 	throw std::logic_error( "Support PhysicalDevice not found!" );
 }
@@ -45,28 +61,27 @@ int main(int argc, char **argv) {
 
 	std::cout<<"vk surface get:"<<surface<<std::endl;
 	auto physicalDevice = instance.findSupportPhysicalDevices(surface);
+	auto formats = physicalDevice.getSurfaceFormatsKHR(surface);
+	for(auto& format:formats){
+		std::cout<<vk::to_string(format.format)<<':'<<vk::to_string(format.colorSpace)<<std::endl;
 
-		auto formats = physicalDevice.getSurfaceFormatsKHR(surface);
-		for(auto& format:formats){
-			std::cout<<vk::to_string(format.format)<<':'<<vk::to_string(format.colorSpace)<<std::endl;
-
-			float queue_priorities[1] = { 0.0 };
-			vk::DeviceQueueCreateInfo dc_q_info;
-			dc_q_info.setQueueFamilyIndex(1).setQueueCount(1).setPQueuePriorities(queue_priorities);
-			std::array<const char *,1> extname{VK_KHR_SWAPCHAIN_EXTENSION_NAME};
-			vk::DeviceCreateInfo dc_info;
-			dc_info.setQueueCreateInfoCount(1).setPQueueCreateInfos(&dc_q_info).setEnabledExtensionCount(extname.size()).setPpEnabledExtensionNames(extname.data());
-			vk::SwapchainCreateInfoKHR scc_info;
-			auto dev = physicalDevice.createDevice(dc_info);
-			vk::SwapchainCreateInfoKHR sc_info;
-			sc_info.setSurface(surface).setMinImageCount(1).setImageFormat(format.format).setImageColorSpace(format.colorSpace)
-				.setImageExtent(vk::Extent2D{1024,768}).setImageArrayLayers(1).setImageUsage(vk::ImageUsageFlagBits::eColorAttachment);
-			auto swapChain = dev.createSwapchainKHR(sc_info);
-			vk::AttachmentDescription att_des;
-			vk::AttachmentReference att_ref;
-			vk::SubpassDescription subpass_des;
-			vk::RenderPassCreateInfo renderpass_info;
-			  // -----------------------------------------------------------------
+		float queue_priorities[1] = { 0.0 };
+		vk::DeviceQueueCreateInfo dc_q_info;
+		dc_q_info.setQueueFamilyIndex(1).setQueueCount(1).setPQueuePriorities(queue_priorities);
+		std::array<const char *,1> extname{VK_KHR_SWAPCHAIN_EXTENSION_NAME};
+		vk::DeviceCreateInfo dc_info;
+		dc_info.setQueueCreateInfoCount(1).setPQueueCreateInfos(&dc_q_info).setEnabledExtensionCount(extname.size()).setPpEnabledExtensionNames(extname.data());
+		vk::SwapchainCreateInfoKHR scc_info;
+		auto dev = physicalDevice.createDevice(dc_info);
+		vk::SwapchainCreateInfoKHR sc_info;
+		sc_info.setSurface(surface).setMinImageCount(1).setImageFormat(format.format).setImageColorSpace(format.colorSpace)
+			.setImageExtent(vk::Extent2D{1024,768}).setImageArrayLayers(1).setImageUsage(vk::ImageUsageFlagBits::eColorAttachment);
+		auto swapChain = dev.createSwapchainKHR(sc_info);
+		vk::AttachmentDescription att_des;
+		vk::AttachmentReference att_ref;
+		vk::SubpassDescription subpass_des;
+		vk::RenderPassCreateInfo renderpass_info;
+  // -----------------------------------------------------------------
   /* Create render pass
   VkAttachmentDescription attachmentDescriptions{
       .format = swapchain.displayFormat_,
@@ -104,15 +119,14 @@ int main(int argc, char **argv) {
       .dependencyCount = 0,
       .pDependencies = nullptr,
   };*/
-			auto renderPass = dev.createRenderPass(renderpass_info);
-			
-			auto swapchainImages = dev.getSwapchainImagesKHR(swapChain);
-			vk::ImageViewCreateInfo iv_create_info;
-			auto ImageView = dev.createImageView(iv_create_info);
-			vk::FramebufferCreateInfo fbCreateInfo;
-			auto fb = dev.createFramebuffer(fbCreateInfo);
-			
-		}
+		auto renderPass = dev.createRenderPass(renderpass_info);
+		auto swapchainImages = dev.getSwapchainImagesKHR(swapChain);
+		vk::ImageViewCreateInfo iv_create_info;
+		auto ImageView = dev.createImageView(iv_create_info);
+		vk::FramebufferCreateInfo fbCreateInfo;
+		auto fb = dev.createFramebuffer(fbCreateInfo);
+		
+	}
 	
 	//auto formats = instance.get_format(surface);
 
