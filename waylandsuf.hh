@@ -1,9 +1,9 @@
-#define VK_USE_PLATFORM_WAYLAND_KHR
+
 #include <algorithm>
-#include "vulkan.hpp"
 #include <memory>
 #include <iostream>
 #include <exception>
+#include <wayland-client.h>
 //#define VK_Validation
 
 namespace toolkit{
@@ -167,5 +167,5 @@ namespace toolkit{
 
 }//namespace vkwl
 
-
+#define VK_USE_PLATFORM_WAYLAND_KHR
 

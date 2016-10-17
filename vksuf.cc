@@ -1,4 +1,5 @@
 #include "waylandsuf.hh"
+#include "vksuf.hh"
 
 int main(int argc, char **argv) {
 
