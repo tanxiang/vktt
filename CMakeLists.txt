@@ -14,6 +14,7 @@ pkg_check_modules(WL wayland-client)
 add_executable(vkt
 	waylandsuf.cc
 	vk.cc
+	main.cc
 	)
 
 target_link_libraries(vkt
