@@ -7,8 +7,7 @@ class Device:public vk::Device{
 	vk::ImageView ImageView;
 	vk::Framebuffer framebuffer;
 public:
-	Device(vk::Device&& device):vk::Device{std::move(device)}{
-	}
+	Device(vk::Device&& device,vk::SurfaceKHR& surface,vk::SurfaceFormatKHR surfaceFormat);
 };
 
 class PhysicalDevice:public vk::PhysicalDevice{

@@ -3,6 +3,18 @@
 #include "vk.hh"
 
 namespace tt{
+Device::Device(vk::Device&& device,vk::SurfaceKHR& surface,vk::SurfaceFormatKHR surfaceFormat):vk::Device{std::move(device)}
+	,swapchain{createSwapchainKHR(
+		vk::SwapchainCreateInfoKHR{
+			vk::SwapchainCreateFlagsKHR(),surface,1,
+			surfaceFormat.format,surfaceFormat.colorSpace,
+			vk::Extent2D{1024,768},1,vk::ImageUsageFlagBits::eColorAttachment
+		}
+	)}
+	,renderPass{createRenderPass(vk::RenderPassCreateInfo{
+	})}
+{
+}
 
 vk::Device PhysicalDevice::createDeviceHelper(vk::SurfaceKHR& surface){
 	auto surfaceFormats = getSurfaceFormatsKHR(surface);
