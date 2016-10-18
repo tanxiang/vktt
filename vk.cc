@@ -8,14 +8,13 @@ vk::Device PhysicalDevice::createDeviceHelper(vk::SurfaceKHR& surface){
 	auto surfaceFormats = getSurfaceFormatsKHR(surface);
 	for(auto& surfaceFormat:surfaceFormats){
 		std::cout<<vk::to_string(surfaceFormat.format)<<':'<<vk::to_string(surfaceFormat.colorSpace)<<std::endl;
-		float queue_priorities[1] = { 0.0 };
-		vk::DeviceQueueCreateInfo dc_q_info;
-		dc_q_info.setQueueFamilyIndex(1).setQueueCount(1).setPQueuePriorities(queue_priorities);
+		float queuePriorities[1] = { 0.0 };
+		vk::DeviceQueueCreateInfo deviceQueueCreateInfo;
+		deviceQueueCreateInfo.setQueueFamilyIndex(1).setQueueCount(1).setPQueuePriorities(queuePriorities);
 		std::array<const char *,1> extname{VK_KHR_SWAPCHAIN_EXTENSION_NAME};
-		vk::DeviceCreateInfo dc_info;
-		dc_info.setQueueCreateInfoCount(1).setPQueueCreateInfos(&dc_q_info).setEnabledExtensionCount(extname.size()).setPpEnabledExtensionNames(extname.data());
-		vk::SwapchainCreateInfoKHR scc_info;
-		return createDevice(dc_info);
+		vk::DeviceCreateInfo deviceCreateInfo;
+		deviceCreateInfo.setQueueCreateInfoCount(1).setPQueueCreateInfos(&deviceQueueCreateInfo).setEnabledExtensionCount(extname.size()).setPpEnabledExtensionNames(extname.data());
+		return createDevice(deviceCreateInfo);
 	}
 	throw std::logic_error( "createDevice not found surfaceFormat!" );
 }
