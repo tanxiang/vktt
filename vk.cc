@@ -3,6 +3,30 @@
 #include "vk.hh"
 
 namespace tt{
+static auto createRenderPasshelper(vk::SurfaceFormatKHR& surfaceFormat){
+	vk::AttachmentDescription attachmentDescriptions{
+		vk::AttachmentDescriptionFlags(),
+		surfaceFormat.format,
+		vk::SampleCountFlagBits::e1,
+		vk::AttachmentLoadOp::eClear,
+		vk::AttachmentStoreOp::eStore,
+		vk::AttachmentLoadOp::eDontCare,
+		vk::AttachmentStoreOp::eDontCare,
+		vk::ImageLayout::eColorAttachmentOptimal,
+		vk::ImageLayout::eColorAttachmentOptimal,
+	};
+
+	vk::AttachmentReference colourReference{0, vk::ImageLayout::eColorAttachmentOptimal};
+	vk::SubpassDescription subpassDescription {
+		vk::SubpassDescriptionFlags(),
+		vk::PipelineBindPoint::eGraphics,0,0,nullptr,1,
+      	colourReference,nullptr,nullptr,0,nullptr
+	};
+/*
+	return createRenderPass(vk::RenderPassCreateInfo{
+	}*/
+}
+
 Device::Device(vk::Device&& device,vk::SurfaceKHR& surface,vk::SurfaceFormatKHR surfaceFormat):vk::Device{std::move(device)}
 	,swapchain{createSwapchainKHR(
 		vk::SwapchainCreateInfoKHR{
@@ -11,8 +35,7 @@ Device::Device(vk::Device&& device,vk::SurfaceKHR& surface,vk::SurfaceFormatKHR 
 			vk::Extent2D{1024,768},1,vk::ImageUsageFlagBits::eColorAttachment
 		}
 	)}
-	,renderPass{createRenderPass(vk::RenderPassCreateInfo{
-	})}
+	,renderPass{/*createRenderPasshelper(surfaceFormat)*/}
 {
 }
 

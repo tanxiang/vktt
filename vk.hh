@@ -1,3 +1,4 @@
+#pragma once
 #include "vulkan.hpp"
 #include <utility>
 namespace tt{
