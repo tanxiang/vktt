@@ -7,6 +7,7 @@ class Device:public vk::Device{
 	vk::RenderPass renderPass;
 	vk::ImageView ImageView;
 	vk::Framebuffer framebuffer;
+	vk::RenderPass createRenderPasshelper(vk::SurfaceFormatKHR& surfaceFormat);
 public:
 	Device(vk::Device&& device,vk::SurfaceKHR& surface,vk::SurfaceFormatKHR surfaceFormat);
 };

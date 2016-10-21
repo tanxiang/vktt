@@ -3,7 +3,7 @@
 #include "vk.hh"
 
 namespace tt{
-static auto createRenderPasshelper(vk::SurfaceFormatKHR& surfaceFormat){
+vk::RenderPass Device::createRenderPasshelper(vk::SurfaceFormatKHR& surfaceFormat){
 	vk::AttachmentDescription attachmentDescriptions{
 		vk::AttachmentDescriptionFlags(),
 		surfaceFormat.format,
@@ -19,12 +19,19 @@ static auto createRenderPasshelper(vk::SurfaceFormatKHR& surfaceFormat){
 	vk::AttachmentReference colourReference{0, vk::ImageLayout::eColorAttachmentOptimal};
 	vk::SubpassDescription subpassDescription {
 		vk::SubpassDescriptionFlags(),
-		vk::PipelineBindPoint::eGraphics,0,0,nullptr,1,
-      	colourReference,nullptr,nullptr,0,nullptr
+		vk::PipelineBindPoint::eGraphics,
+		0,nullptr,1,&colourReference,
+		nullptr,nullptr,0,nullptr
 	};
-/*
-	return createRenderPass(vk::RenderPassCreateInfo{
-	}*/
+
+	return createRenderPass(
+		vk::RenderPassCreateInfo{
+			vk::RenderPassCreateFlags(),
+			1,&attachmentDescriptions,
+			1,&subpassDescription,
+			0,nullptr
+		}
+	);
 }
 
 Device::Device(vk::Device&& device,vk::SurfaceKHR& surface,vk::SurfaceFormatKHR surfaceFormat):vk::Device{std::move(device)}
