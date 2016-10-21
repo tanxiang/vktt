@@ -4,8 +4,8 @@
 
 namespace tt{
 
-Swapchain::Swapchain(vk::SwapchainKHR&& swapchain){
-	std::cout<<"&&swapchain\n";
+Swapchain::Swapchain(vk::SwapchainKHR&& swapchain): vk::SwapchainKHR{std::move(swapchain)}{
+	//std::cout<<"&&swapchain\n";
 }
 
 vk::RenderPass Device::createRenderPasshelper(vk::SurfaceFormatKHR& surfaceFormat){
@@ -49,10 +49,19 @@ Device::Device(vk::Device&& device,vk::SurfaceKHR& surface,vk::SurfaceFormatKHR 
 	)},
 	renderPass{createRenderPasshelper(surfaceFormat)}
 {
+	auto swapchainImages{getSwapchainImagesKHR(swapchain)};
+	for(auto& swapchainImage:swapchainImages){
+		vk::ImageViewCreateInfo imageViewCreateInfo{
+		};
+		imageViews.emplace_back(createImageView(imageViewCreateInfo));
+		
+		vk::FramebufferCreateInfo framebufferCreateInfo;
+		framebuffers.emplace_back(createFramebuffer(framebufferCreateInfo));
+	}
 }
 
 Device PhysicalDevice::createDeviceHelper(vk::SurfaceKHR& surface){
-	auto surfaceFormats = getSurfaceFormatsKHR(surface);
+	auto surfaceFormats{getSurfaceFormatsKHR(surface)};
 	for(auto& surfaceFormat:surfaceFormats){
 		std::cout<<vk::to_string(surfaceFormat.format)<<':'<<vk::to_string(surfaceFormat.colorSpace)<<std::endl;
 		float queuePriorities[1] = { 0.0 };
@@ -76,7 +85,7 @@ vk::SurfaceKHR Instance::createSurface(wl_display *display,wl_surface *surface){
 }
 
 PhysicalDevice Instance::findSupportPhysicalDevices(vk::SurfaceKHR& surface){
-	auto physicalDevices = enumeratePhysicalDevices();
+	auto physicalDevices{enumeratePhysicalDevices()};
 	for(auto& physicalDevice:physicalDevices){
 		auto physicalDeviceProperties=physicalDevice.getProperties();
 		std::cout<<"name:"<<physicalDeviceProperties.deviceName<<

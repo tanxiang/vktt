@@ -3,8 +3,6 @@
 #include <utility>
 namespace tt{
 class Swapchain:public vk::SwapchainKHR{
-	vk::ImageView imageView;
-	vk::Framebuffer framebuffer;
 public:
 	Swapchain(vk::SwapchainKHR&& swapchain);
 };
@@ -12,6 +10,8 @@ public:
 class Device:public vk::Device{
 	Swapchain swapchain;
 	vk::RenderPass renderPass;
+	std::vector<vk::ImageView> imageViews;
+	std::vector<vk::Framebuffer> framebuffers;
 	vk::RenderPass createRenderPasshelper(vk::SurfaceFormatKHR& surfaceFormat);
 public:
 	Device(vk::Device&& device,vk::SurfaceKHR& surface,vk::SurfaceFormatKHR surfaceFormat);
