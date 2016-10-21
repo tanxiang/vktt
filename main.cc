@@ -10,10 +10,12 @@ int main(int argc, char **argv) {
 
 	std::cout<<"vk surface get:"<<surface<<std::endl;
 	auto physicalDevice = instance.findSupportPhysicalDevices(surface);
-	auto formats = physicalDevice.getSurfaceFormatsKHR(surface);
+	//auto formats = physicalDevice.getSurfaceFormatsKHR(surface);
+	auto device = physicalDevice.createDeviceHelper(surface);
+
+/*
 	for(auto& format:formats){
 		std::cout<<vk::to_string(format.format)<<':'<<vk::to_string(format.colorSpace)<<std::endl;
-
 		float queue_priorities[1] = { 0.0 };
 		vk::DeviceQueueCreateInfo dc_q_info;
 		dc_q_info.setQueueFamilyIndex(1).setQueueCount(1).setPQueuePriorities(queue_priorities);
@@ -31,7 +33,7 @@ int main(int argc, char **argv) {
 		vk::SubpassDescription subpass_des;
 		vk::RenderPassCreateInfo renderpass_info;
   // -----------------------------------------------------------------
-  /* Create render pass
+   Create render pass
   VkAttachmentDescription attachmentDescriptions{
       .format = swapchain.displayFormat_,
       .samples = VK_SAMPLE_COUNT_1_BIT,
@@ -67,16 +69,16 @@ int main(int argc, char **argv) {
       .pSubpasses = &subpassDescription,
       .dependencyCount = 0,
       .pDependencies = nullptr,
-  };*/
+  };
 		auto renderPass = dev.createRenderPass(renderpass_info);
 		auto swapchainImages = dev.getSwapchainImagesKHR(swapChain);
 		vk::ImageViewCreateInfo iv_create_info;
 		auto ImageView = dev.createImageView(iv_create_info);
 		vk::FramebufferCreateInfo fbCreateInfo;
 		auto fb = dev.createFramebuffer(fbCreateInfo);
-		
-	}
 	
+	}
+	*/	
 	//auto formats = instance.get_format(surface);
 
 	//for(auto& format:formats){

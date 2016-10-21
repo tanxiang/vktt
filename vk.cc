@@ -3,6 +3,11 @@
 #include "vk.hh"
 
 namespace tt{
+
+Swapchain::Swapchain(vk::SwapchainKHR&& swapchain){
+	std::cout<<"&&swapchain\n";
+}
+
 vk::RenderPass Device::createRenderPasshelper(vk::SurfaceFormatKHR& surfaceFormat){
 	vk::AttachmentDescription attachmentDescriptions{
 		vk::AttachmentDescriptionFlags(),
@@ -34,19 +39,19 @@ vk::RenderPass Device::createRenderPasshelper(vk::SurfaceFormatKHR& surfaceForma
 	);
 }
 
-Device::Device(vk::Device&& device,vk::SurfaceKHR& surface,vk::SurfaceFormatKHR surfaceFormat):vk::Device{std::move(device)}
-	,swapchain{createSwapchainKHR(
+Device::Device(vk::Device&& device,vk::SurfaceKHR& surface,vk::SurfaceFormatKHR surfaceFormat):vk::Device{std::move(device)},
+	swapchain{createSwapchainKHR(
 		vk::SwapchainCreateInfoKHR{
 			vk::SwapchainCreateFlagsKHR(),surface,1,
 			surfaceFormat.format,surfaceFormat.colorSpace,
 			vk::Extent2D{1024,768},1,vk::ImageUsageFlagBits::eColorAttachment
 		}
-	)}
-	,renderPass{/*createRenderPasshelper(surfaceFormat)*/}
+	)},
+	renderPass{createRenderPasshelper(surfaceFormat)}
 {
 }
 
-vk::Device PhysicalDevice::createDeviceHelper(vk::SurfaceKHR& surface){
+Device PhysicalDevice::createDeviceHelper(vk::SurfaceKHR& surface){
 	auto surfaceFormats = getSurfaceFormatsKHR(surface);
 	for(auto& surfaceFormat:surfaceFormats){
 		std::cout<<vk::to_string(surfaceFormat.format)<<':'<<vk::to_string(surfaceFormat.colorSpace)<<std::endl;
@@ -56,7 +61,7 @@ vk::Device PhysicalDevice::createDeviceHelper(vk::SurfaceKHR& surface){
 		std::array<const char *,1> extname{VK_KHR_SWAPCHAIN_EXTENSION_NAME};
 		vk::DeviceCreateInfo deviceCreateInfo;
 		deviceCreateInfo.setQueueCreateInfoCount(1).setPQueueCreateInfos(&deviceQueueCreateInfo).setEnabledExtensionCount(extname.size()).setPpEnabledExtensionNames(extname.data());
-		return createDevice(deviceCreateInfo);
+		return Device{createDevice(deviceCreateInfo),surface,surfaceFormat};
 	}
 	throw std::logic_error( "createDevice not found surfaceFormat!" );
 }
