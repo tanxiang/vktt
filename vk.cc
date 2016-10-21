@@ -52,10 +52,25 @@ Device::Device(vk::Device&& device,vk::SurfaceKHR& surface,vk::SurfaceFormatKHR 
 	auto swapchainImages{getSwapchainImagesKHR(swapchain)};
 	for(auto& swapchainImage:swapchainImages){
 		vk::ImageViewCreateInfo imageViewCreateInfo{
+			vk::ImageViewCreateFlags(),
+			swapchainImage,
+			vk::ImageViewType::e2D,
+			surfaceFormat.format,
+			vk::ComponentMapping{
+				vk::ComponentSwizzle::eR,
+				vk::ComponentSwizzle::eG,
+				vk::ComponentSwizzle::eB,
+				vk::ComponentSwizzle::eA
+			},
+			vk::ImageSubresourceRange{
+				vk::ImageAspectFlagBits::eColor,0,1,0,1
+			}
 		};
 		imageViews.emplace_back(createImageView(imageViewCreateInfo));
 		
-		vk::FramebufferCreateInfo framebufferCreateInfo;
+		vk::FramebufferCreateInfo framebufferCreateInfo{
+			vk::FramebufferCreateFlags(),renderPass,1,&*imageViews.rbegin(),1024,768,1
+		};
 		framebuffers.emplace_back(createFramebuffer(framebufferCreateInfo));
 	}
 }
