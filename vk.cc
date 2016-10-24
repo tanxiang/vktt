@@ -18,7 +18,7 @@ vk::RenderPass Device::createRenderPasshelper(vk::SurfaceFormatKHR& surfaceForma
 		vk::AttachmentLoadOp::eDontCare,
 		vk::AttachmentStoreOp::eDontCare,
 		vk::ImageLayout::eColorAttachmentOptimal,
-		vk::ImageLayout::eColorAttachmentOptimal,
+		vk::ImageLayout::eColorAttachmentOptimal
 	};
 
 	vk::AttachmentReference colourReference{0, vk::ImageLayout::eColorAttachmentOptimal};

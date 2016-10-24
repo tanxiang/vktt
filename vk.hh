@@ -5,6 +5,8 @@ namespace tt{
 class Swapchain:public vk::SwapchainKHR{
 public:
 	Swapchain(vk::SwapchainKHR&& swapchain);
+	~Swapchain(){
+	}
 };
 
 class Device:public vk::Device{
@@ -15,6 +17,10 @@ class Device:public vk::Device{
 	vk::RenderPass createRenderPasshelper(vk::SurfaceFormatKHR& surfaceFormat);
 public:
 	Device(vk::Device&& device,vk::SurfaceKHR& surface,vk::SurfaceFormatKHR surfaceFormat);
+	~Device(){
+		destroySwapchainKHR(swapchain);
+		destroy();
+	}
 };
 
 class PhysicalDevice:public vk::PhysicalDevice{
@@ -22,6 +28,9 @@ public:
 	PhysicalDevice(vk::PhysicalDevice&& physicalDevice):vk::PhysicalDevice{std::move(physicalDevice)}{
 	}
 	Device createDeviceHelper(vk::SurfaceKHR& surface);
+	~PhysicalDevice(){
+		//destroy();
+	}
 };
 
 class Instance:public vk::Instance{
@@ -30,6 +39,9 @@ public:
 	}
 	vk::SurfaceKHR createSurface(wl_display *display,wl_surface *surface);
 	PhysicalDevice findSupportPhysicalDevices(vk::SurfaceKHR& surface);
+	~Instance(){
+		destroy();
+	}
 };
 
 Instance createInstance();
