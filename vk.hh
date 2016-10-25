@@ -19,6 +19,11 @@ public:
 	Device(vk::Device&& device,vk::SurfaceKHR& surface,vk::SurfaceFormatKHR surfaceFormat);
 	~Device(){
 		destroySwapchainKHR(swapchain);
+		destroyRenderPass(renderPass);
+		for(auto &imageView:imageViews)
+			destroyImageView(imageView);
+		for(auto &framebuffer:framebuffers)
+			destroyFramebuffer(framebuffer);
 		destroy();
 	}
 };
