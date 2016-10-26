@@ -14,6 +14,8 @@ pkg_check_modules(WL wayland-client)
 add_executable(vkt
 	waylandsuf.cc
 	vk.cc
+	vkpipe.cc
+	vkbuf.cc
 	main.cc
 	)
 

@@ -1,6 +1,7 @@
-#include "waylandsuf.hh"
-#define VK_USE_PLATFORM_WAYLAND_KHR
 #include "vk.hh"
+#include "vkpipe.hh"
+#include "vkbuf.hh"
+#include "waylandsuf.hh"
 int main(int argc, char **argv) {
 	toolkit::Display display;
 	auto window{display.CreateWindow()};
