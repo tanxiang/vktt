@@ -17,6 +17,8 @@ class Device:public vk::Device{
 	std::vector<vk::Framebuffer> framebuffers;
 	vk::RenderPass createRenderPasshelper(vk::SurfaceFormatKHR& surfaceFormat);
 public:
+	void createBufferHelper();
+	void createGraphicsPipelineHelper();
 	Device(vk::Device&& device,vk::SurfaceKHR& surface,vk::SurfaceFormatKHR surfaceFormat);
 	~Device(){
 		destroySwapchainKHR(swapchain);

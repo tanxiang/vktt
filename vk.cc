@@ -8,6 +8,13 @@ Swapchain::Swapchain(vk::SwapchainKHR&& swapchain): vk::SwapchainKHR{std::move(s
 	//std::cout<<"&&swapchain\n";
 }
 
+void Device::createBufferHelper(){
+
+}
+void Device::createGraphicsPipelineHelper(){
+
+}
+	
 vk::RenderPass Device::createRenderPasshelper(vk::SurfaceFormatKHR& surfaceFormat){
 	vk::AttachmentDescription attachmentDescriptions{
 		vk::AttachmentDescriptionFlags(),
@@ -74,6 +81,7 @@ Device::Device(vk::Device&& device,vk::SurfaceKHR& surface,vk::SurfaceFormatKHR 
 		framebuffers.emplace_back(createFramebuffer(framebufferCreateInfo));
 	}
 }
+
 
 Device PhysicalDevice::createDeviceHelper(vk::SurfaceKHR& surface){
 	auto surfaceFormats{getSurfaceFormatsKHR(surface)};

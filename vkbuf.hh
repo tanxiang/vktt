@@ -3,4 +3,6 @@
 
 namespace tt{
 
+void createBuffer(Device &device);
+
 }//namespace
