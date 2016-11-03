@@ -9,8 +9,49 @@ Swapchain::Swapchain(vk::SwapchainKHR&& swapchain): vk::SwapchainKHR{std::move(s
 }
 
 void Device::createBufferHelper(){
+	// Vertex positions
+	const float vertexData[] = {
+		-1.0f, -1.0f, 0.0f,
+		1.0f, -1.0f, 0.0f,
+		0.0f,  1.0f, 0.0f,
+	};
+  // Create a vertex buffer
+	uint32_t queueIdx = 0;
+	vk::BufferCreateInfo createBufferInfo{
+		vk::BufferCreateFlags(),
+		sizeof(vertexData),
+		vk::BufferUsageFlagBits::eVertexBuffer,
+		vk::SharingMode::eExclusive,
+		1,
+		&queueIdx
+	};
 
-}
+	auto buffer = createBuffer(createBufferInfo);
+
+	auto memReq = getBufferMemoryRequirements(buffer);
+
+	vk::MemoryAllocateInfo allocInfo {
+		memReq.size,
+		0,  // Memory type assigned in the next step
+	};
+
+/*
+	MapMemoryTypeToIndex(memReq.memoryTypeBits,
+                              VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
+                              &allocInfo.memoryTypeIndex);
+
+  // Allocate memory for the buffer
+  VkDeviceMemory deviceMemory;
+  CALL_VK(vkAllocateMemory(device.device_, &allocInfo, nullptr, &deviceMemory));
+
+  void* data;
+  CALL_VK(vkMapMemory(device.device_, deviceMemory, 0, sizeof(vertexData), 0,
+                      &data));
+  memcpy(data, vertexData, sizeof(vertexData));
+  vkUnmapMemory(device.device_, deviceMemory);
+
+  CALL_VK(vkBindBufferMemory(device.device_, buffers.vertexBuf, deviceMemory, 0));
+*/}
 void Device::createGraphicsPipelineHelper(){
 
 }
@@ -46,7 +87,9 @@ vk::RenderPass Device::createRenderPasshelper(vk::SurfaceFormatKHR& surfaceForma
 	);
 }
 
-Device::Device(vk::Device&& device,vk::SurfaceKHR& surface,vk::SurfaceFormatKHR surfaceFormat):vk::Device{std::move(device)},
+Device::Device(PhysicalDevice& pD,vk::Device&& device,vk::SurfaceKHR& surface,vk::SurfaceFormatKHR surfaceFormat):
+	vk::Device{std::move(device)},
+	physicalDevice{pD},
 	swapchain{createSwapchainKHR(
 		vk::SwapchainCreateInfoKHR{
 			vk::SwapchainCreateFlagsKHR(),surface,1,
@@ -93,7 +136,7 @@ Device PhysicalDevice::createDeviceHelper(vk::SurfaceKHR& surface){
 		std::array<const char *,1> extname{VK_KHR_SWAPCHAIN_EXTENSION_NAME};
 		vk::DeviceCreateInfo deviceCreateInfo;
 		deviceCreateInfo.setQueueCreateInfoCount(1).setPQueueCreateInfos(&deviceQueueCreateInfo).setEnabledExtensionCount(extname.size()).setPpEnabledExtensionNames(extname.data());
-		return Device{createDevice(deviceCreateInfo),surface,surfaceFormat};
+		return Device{*this,createDevice(deviceCreateInfo),surface,surfaceFormat};
 	}
 	throw std::logic_error( "createDevice not found surfaceFormat!" );
 }

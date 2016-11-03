@@ -3,31 +3,13 @@
 #include <vulkan/vulkan.hpp>
 #include <utility>
 namespace tt{
+class Device;
+
 class Swapchain:public vk::SwapchainKHR{
+	//Device& Device;
 public:
 	Swapchain(vk::SwapchainKHR&& swapchain);
 	~Swapchain(){
-	}
-};
-
-class Device:public vk::Device{
-	Swapchain swapchain;
-	vk::RenderPass renderPass;
-	std::vector<vk::ImageView> imageViews;
-	std::vector<vk::Framebuffer> framebuffers;
-	vk::RenderPass createRenderPasshelper(vk::SurfaceFormatKHR& surfaceFormat);
-public:
-	void createBufferHelper();
-	void createGraphicsPipelineHelper();
-	Device(vk::Device&& device,vk::SurfaceKHR& surface,vk::SurfaceFormatKHR surfaceFormat);
-	~Device(){
-		destroySwapchainKHR(swapchain);
-		destroyRenderPass(renderPass);
-		for(auto &imageView:imageViews)
-			destroyImageView(imageView);
-		for(auto &framebuffer:framebuffers)
-			destroyFramebuffer(framebuffer);
-		destroy();
 	}
 };
 
@@ -40,6 +22,51 @@ public:
 		//destroy();
 	}
 };
+
+class RenderPass:public vk::RenderPass{
+	//Device& Device;
+public:
+	RenderPass(vk::RenderPass&& renderPass):vk::RenderPass{std::move(renderPass)}{
+	};
+};
+
+class ImageView:public vk::ImageView{
+	//Device& Device;
+public:
+	ImageView(vk::ImageView&& imageView):vk::ImageView{std::move(imageView)}{
+	};
+};
+
+class Framebuffer:public vk::Framebuffer{
+	//Device& Device;
+public:
+	Framebuffer(vk::Framebuffer&& framebuffer):vk::Framebuffer{std::move(framebuffer)}{
+	};
+};
+
+class Device:public vk::Device{
+	PhysicalDevice& physicalDevice;
+	Swapchain swapchain;
+	vk::RenderPass renderPass;
+	std::vector<ImageView> imageViews;
+	std::vector<Framebuffer> framebuffers;
+	vk::RenderPass createRenderPasshelper(vk::SurfaceFormatKHR& surfaceFormat);
+public:
+	void createBufferHelper();
+	void createGraphicsPipelineHelper();
+	bool crawFrame(){return false;}
+	Device(PhysicalDevice& physicalDevice,vk::Device&& device,vk::SurfaceKHR& surface,vk::SurfaceFormatKHR surfaceFormat);
+	~Device(){
+		destroySwapchainKHR(swapchain);
+		destroyRenderPass(renderPass);
+		for(auto &imageView:imageViews)
+			destroyImageView(imageView);
+		for(auto &framebuffer:framebuffers)
+			destroyFramebuffer(framebuffer);
+		destroy();
+	}
+};
+
 
 class Instance:public vk::Instance{
 public:
