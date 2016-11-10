@@ -15,6 +15,7 @@ public:
 
 class PhysicalDevice:public vk::PhysicalDevice{
 public:
+	uint32_t mapMemoryTypeToIndex(uint32_t typeBits,vk::MemoryPropertyFlagBits requirements_mask);
 	PhysicalDevice(vk::PhysicalDevice&& physicalDevice):vk::PhysicalDevice{std::move(physicalDevice)}{
 	}
 	Device createDeviceHelper(vk::SurfaceKHR& surface);
@@ -26,22 +27,25 @@ public:
 class RenderPass:public vk::RenderPass{
 	//Device& Device;
 public:
-	RenderPass(vk::RenderPass&& renderPass):vk::RenderPass{std::move(renderPass)}{
-	};
+	using vk::RenderPass::RenderPass;
+	//RenderPass(vk::RenderPass&& renderPass):vk::RenderPass{std::move(renderPass)}{
+	//};
 };
 
 class ImageView:public vk::ImageView{
 	//Device& Device;
 public:
-	ImageView(vk::ImageView&& imageView):vk::ImageView{std::move(imageView)}{
-	};
+	using vk::ImageView::ImageView;
+	//ImageView(vk::ImageView&& imageView):vk::ImageView{std::move(imageView)}{
+	//};
 };
 
 class Framebuffer:public vk::Framebuffer{
 	//Device& Device;
 public:
-	Framebuffer(vk::Framebuffer&& framebuffer):vk::Framebuffer{std::move(framebuffer)}{
-	};
+	using vk::Framebuffer::Framebuffer;
+	//Framebuffer(vk::Framebuffer&& framebuffer):vk::Framebuffer{std::move(framebuffer)}{
+	//};
 };
 
 class Device:public vk::Device{

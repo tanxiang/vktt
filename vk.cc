@@ -4,6 +4,23 @@
 
 namespace tt{
 
+uint32_t PhysicalDevice::mapMemoryTypeToIndex(uint32_t typeBits,
+                              vk::MemoryPropertyFlagBits requirementsMask) {
+	auto memoryProperties = getMemoryProperties();
+  // Search memtypes to find first index with those properties
+	for (uint32_t i = 0; i < 32; i++) {
+		if ((typeBits & 1) == 1) {
+			// Type is available, does it match user properties?
+			if ((memoryProperties.memoryTypes[i].propertyFlags &
+				requirementsMask) == requirementsMask) {
+				return i;
+			}
+		}
+		typeBits >>= 1;
+	}
+	return 0;//FIXME throw??
+}
+
 Swapchain::Swapchain(vk::SwapchainKHR&& swapchain): vk::SwapchainKHR{std::move(swapchain)}{
 	//std::cout<<"&&swapchain\n";
 }
@@ -32,7 +49,7 @@ void Device::createBufferHelper(){
 
 	vk::MemoryAllocateInfo allocInfo {
 		memReq.size,
-		0,  // Memory type assigned in the next step
+		physicalDevice.mapMemoryTypeToIndex(memReq.memoryTypeBits,vk::MemoryPropertyFlagBits::eHostVisible)
 	};
 
 /*
@@ -51,7 +68,9 @@ void Device::createBufferHelper(){
   vkUnmapMemory(device.device_, deviceMemory);
 
   CALL_VK(vkBindBufferMemory(device.device_, buffers.vertexBuf, deviceMemory, 0));
-*/}
+*/
+}
+
 void Device::createGraphicsPipelineHelper(){
 
 }
