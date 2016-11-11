@@ -56,23 +56,14 @@ void Device::createBufferHelper(){
 	memcpy(data, vertexData, sizeof(vertexData));
 	unmapMemory(deviceMemory);
 	bindBufferMemory(buffer,deviceMemory,0);
-	
-/*
-  VkDeviceMemory deviceMemory;
-  CALL_VK(vkAllocateMemory(device.device_, &allocInfo, nullptr, &deviceMemory));
-
-  void* data;
-  CALL_VK(vkMapMemory(device.device_, deviceMemory, 0, sizeof(vertexData), 0,
-                      &data));
-  memcpy(data, vertexData, sizeof(vertexData));
-  vkUnmapMemory(device.device_, deviceMemory);
-
-  CALL_VK(vkBindBufferMemory(device.device_, buffers.vertexBuf, deviceMemory, 0));
-*/
+	//FIXME need freeMemory(deviceMemory);
 }
 
 void Device::createGraphicsPipelineHelper(){
+	vk::ShaderModule vertexShader,fragmentShader;
 
+	auto pipelineLayout = createPipelineLayout(	vk::PipelineLayoutCreateInfo{});
+	vk::PipelineDynamicStateCreateInfo pipelineDynamicStateCreateInfo{};
 }
 	
 vk::RenderPass Device::createRenderPasshelper(vk::SurfaceFormatKHR& surfaceFormat){

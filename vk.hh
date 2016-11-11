@@ -55,6 +55,7 @@ class Device:public vk::Device{
 	std::vector<ImageView> imageViews;
 	std::vector<Framebuffer> framebuffers;
 	vk::RenderPass createRenderPasshelper(vk::SurfaceFormatKHR& surfaceFormat);
+	bool loadShaderFromFile(const char* filePath);
 public:
 	void createBufferHelper();
 	void createGraphicsPipelineHelper();
