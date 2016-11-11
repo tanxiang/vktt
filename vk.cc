@@ -52,6 +52,11 @@ void Device::createBufferHelper(){
 		physicalDevice.mapMemoryTypeToIndex(memReq.memoryTypeBits,vk::MemoryPropertyFlagBits::eHostVisible)
 	};
 	auto deviceMemory = allocateMemory(allocInfo);
+	void *data = mapMemory(deviceMemory,0,sizeof(vertexData));
+	memcpy(data, vertexData, sizeof(vertexData));
+	unmapMemory(deviceMemory);
+	bindBufferMemory(buffer,deviceMemory,0);
+	
 /*
   VkDeviceMemory deviceMemory;
   CALL_VK(vkAllocateMemory(device.device_, &allocInfo, nullptr, &deviceMemory));
