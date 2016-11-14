@@ -1,8 +1,15 @@
 #include <iostream>
 #define VK_USE_PLATFORM_WAYLAND_KHR
 #include "vk.hh"
+#include <experimental/filesystem>
+namespace fs = std::experimental::filesystem;
 
 namespace tt{
+
+auto loadShaderWithDevice(Device& device,const char* fileName){
+	fs::path p = fs::current_path() / fileName;
+	return true;
+}
 
 uint32_t PhysicalDevice::mapMemoryTypeToIndex(uint32_t typeBits,
                               vk::MemoryPropertyFlagBits requirementsMask) {

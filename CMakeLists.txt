@@ -16,12 +16,14 @@ add_executable(vkt
 	vk.cc
 	vkpipe.cc
 	vkbuf.cc
+	fmap.cc
 	main.cc
 	)
 
 target_link_libraries(vkt
 	${WL_LIBRARIES}
 	-lvulkan
+	-lstdc++fs
 )
 
 
