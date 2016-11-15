@@ -6,6 +6,7 @@
 
 namespace tt{
 class fileMapBuf{
-	std::unique_ptr<char[]> buf;
+	std::unique_ptr<char[],std::function<void(char*)>> buf;
+	size_t len;
 };
 }//namespace
