@@ -71,6 +71,9 @@ void Device::createGraphicsPipelineHelper(){
 
 	auto pipelineLayout = createPipelineLayout(	vk::PipelineLayoutCreateInfo{});
 	vk::PipelineDynamicStateCreateInfo pipelineDynamicStateCreateInfo{};
+	
+	vk::PipelineShaderStageCreateInfo pipelineShaderStageCreateInfo[2];
+	
 }
 	
 vk::RenderPass Device::createRenderPasshelper(vk::SurfaceFormatKHR& surfaceFormat){
