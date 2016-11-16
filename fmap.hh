@@ -2,9 +2,9 @@
 #include <iostream>
 #include <experimental/filesystem>
 #include <memory>
-
+#include <utility>
 namespace tt{
 using FileMap = std::unique_ptr<void,std::function<void(void*)>>;
-FileMap fileMapBuf(const char* fileName,size_t* fileSize = nullptr);
+std::pair<FileMap,size_t> fileMapBuf(const char* fileName);
 
 }//namespace
