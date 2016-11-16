@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
 	auto device = physicalDevice.createDeviceHelper(surface);
 	device.createBufferHelper();
 	device.createGraphicsPipelineHelper();
-	//tt::createBuffer(device);
+
 	window.set_toplevel();
 	display.run();
 	exit(0);

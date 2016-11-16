@@ -73,7 +73,7 @@ void Device::createGraphicsPipelineHelper(){
 	vk::PipelineDynamicStateCreateInfo pipelineDynamicStateCreateInfo{};
 	
 	vk::PipelineShaderStageCreateInfo pipelineShaderStageCreateInfo[2];
-	
+	vk::GraphicsPipelineCreateInfo pipelineCreateInfo;
 }
 	
 vk::RenderPass Device::createRenderPasshelper(vk::SurfaceFormatKHR& surfaceFormat){
