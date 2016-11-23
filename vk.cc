@@ -148,7 +148,7 @@ void Device::createGraphicsPipelineHelper(){
 		&multisampleInfo,
 		nullptr,
 		&colorBlendInfo,
-		&dynamicStateInfo,
+		&pipelineDynamicStateCreateInfo,
 		pipelineLayout,
 		vk::RenderPass(),//FIXME
 		0,VK_NULL_HANDLE,0
