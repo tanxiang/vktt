@@ -118,19 +118,41 @@ void Device::createGraphicsPipelineHelper(){
 	
 	// Specify rasterizer info
 	vk::PipelineRasterizationStateCreateInfo rasterInfo;
-
+	rasterInfo.setLineWidth(1);
 	// Specify input assembler state
 	vk::PipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
 	// Specify vertex input state
-	vk::VertexInputBindingDescription vertex_input_bindings;
-	vk::VertexInputAttributeDescription vertex_input_attributes[1];
-	vk::PipelineVertexInputStateCreateInfo vertexInputInfo;
+	vk::VertexInputBindingDescription vertex_input_bindings{
+		0,3*sizeof(float),vk::VertexInputRate::eVertex
+	};
+	vk::VertexInputAttributeDescription vertex_input_attributes;
+	vertex_input_attributes.setFormat(vk::Format::eR32G32B32Sfloat);
+	vk::PipelineVertexInputStateCreateInfo vertexInputInfo{
+		vk::PipelineVertexInputStateCreateFlags(),
+		1,&vertex_input_bindings,
+		1,&vertex_input_attributes
+	};
 	
 	// Create the pipeline cache
 	vk::PipelineCacheCreateInfo pipelineCacheInfo;
 	auto pipelineCache = createPipelineCache(pipelineCacheInfo);
 	
-	vk::GraphicsPipelineCreateInfo pipelineCreateInfo;
+	vk::GraphicsPipelineCreateInfo pipelineCreateInfo{
+		vk::PipelineCreateFlags(),
+		2,pipelineShaderStageCreateInfo,
+		&vertexInputInfo,
+		&inputAssemblyInfo,
+		nullptr,
+		&viewportInfo,
+		&rasterInfo,
+		&multisampleInfo,
+		nullptr,
+		&colorBlendInfo,
+		&dynamicStateInfo,
+		pipelineLayout,
+		vk::RenderPass(),//FIXME
+		0,VK_NULL_HANDLE,0
+	};
 	auto graphicsPipeline = createGraphicsPipelines(pipelineCache,pipelineCreateInfo);
 }
 	
