@@ -67,13 +67,71 @@ void Device::createBufferHelper(){
 }
 
 void Device::createGraphicsPipelineHelper(){
-	vk::ShaderModule vertexShader,fragmentShader;
+
 
 	auto pipelineLayout = createPipelineLayout(	vk::PipelineLayoutCreateInfo{});
 	vk::PipelineDynamicStateCreateInfo pipelineDynamicStateCreateInfo{};
 	
-	vk::PipelineShaderStageCreateInfo pipelineShaderStageCreateInfo[2];
+	vk::ShaderModule vertexShader,fragmentShader;
+	vk::PipelineShaderStageCreateInfo pipelineShaderStageCreateInfo[2]{
+		{
+			vk::PipelineShaderStageCreateFlags(),
+			vk::ShaderStageFlagBits::eVertex,
+			vertexShader,
+			"main",
+			nullptr
+		},
+		{
+			vk::PipelineShaderStageCreateFlags(),
+			vk::ShaderStageFlagBits::eFragment,
+			fragmentShader,
+			"main",
+			nullptr
+		}
+	};
+
+	// Specify viewport info
+	vk::Viewport viewport{
+		0.0,1.0,
+		0,0,
+		1024,768
+	};
+	vk::Rect2D scissor{
+		{1024,768},{0,0}
+	};
+	vk::PipelineViewportStateCreateInfo viewportInfo{
+		vk::PipelineViewportStateCreateFlags(),
+		1,&viewport,
+		1,&scissor
+	};
+	
+	// Specify multisample info
+	vk::SampleMask sampleMask=~0u;
+	vk::PipelineMultisampleStateCreateInfo multisampleInfo;
+	multisampleInfo.setPSampleMask(&sampleMask);
+	
+	// Specify color blend state
+	vk::PipelineColorBlendAttachmentState attachmentStates;
+	attachmentStates.setColorWriteMask(vk::ColorComponentFlagBits::eR|vk::ColorComponentFlagBits::eB|vk::ColorComponentFlagBits::eG|vk::ColorComponentFlagBits::eA);
+	vk::PipelineColorBlendStateCreateInfo colorBlendInfo;
+	colorBlendInfo.setLogicOp(vk::LogicOp::eCopy).setAttachmentCount(1).setPAttachments(&attachmentStates);
+	
+	// Specify rasterizer info
+	vk::PipelineRasterizationStateCreateInfo rasterInfo;
+
+	// Specify input assembler state
+	vk::PipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
+	// Specify vertex input state
+	vk::VertexInputBindingDescription vertex_input_bindings;
+	vk::VertexInputAttributeDescription vertex_input_attributes[1];
+	vk::PipelineVertexInputStateCreateInfo vertexInputInfo;
+	
+	// Create the pipeline cache
+	vk::PipelineCacheCreateInfo pipelineCacheInfo;
+	auto pipelineCache = createPipelineCache(pipelineCacheInfo);
+	
 	vk::GraphicsPipelineCreateInfo pipelineCreateInfo;
+	auto graphicsPipeline = createGraphicsPipelines(pipelineCache,pipelineCreateInfo);
 }
 	
 vk::RenderPass Device::createRenderPasshelper(vk::SurfaceFormatKHR& surfaceFormat){
