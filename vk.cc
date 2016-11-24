@@ -67,7 +67,6 @@ void Device::createBufferHelper(){
 }
 
 void Device::createGraphicsPipelineHelper(){
-
 	auto pipelineLayout = createPipelineLayout(	vk::PipelineLayoutCreateInfo{});
 	vk::PipelineDynamicStateCreateInfo pipelineDynamicStateCreateInfo{};
 	
@@ -149,7 +148,7 @@ void Device::createGraphicsPipelineHelper(){
 		&colorBlendInfo,
 		&pipelineDynamicStateCreateInfo,
 		pipelineLayout,
-		vk::RenderPass(),//FIXME
+		renderPass,
 		0,VK_NULL_HANDLE,0
 	};
 	auto graphicsPipeline = createGraphicsPipelines(pipelineCache,pipelineCreateInfo);
