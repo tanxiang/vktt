@@ -68,7 +68,6 @@ void Device::createBufferHelper(){
 
 void Device::createGraphicsPipelineHelper(){
 
-
 	auto pipelineLayout = createPipelineLayout(	vk::PipelineLayoutCreateInfo{});
 	vk::PipelineDynamicStateCreateInfo pipelineDynamicStateCreateInfo{};
 	
