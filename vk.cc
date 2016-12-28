@@ -1,6 +1,7 @@
 #include <iostream>
 #define VK_USE_PLATFORM_WAYLAND_KHR
 #include "vk.hh"
+#include "fmap.hh"
 #include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
 
@@ -70,7 +71,24 @@ void Device::createGraphicsPipelineHelper(){
 	auto pipelineLayout = createPipelineLayout(	vk::PipelineLayoutCreateInfo{});
 	vk::PipelineDynamicStateCreateInfo pipelineDynamicStateCreateInfo{};
 	
-	vk::ShaderModule vertexShader,fragmentShader;
+	//vk::ShaderModule vertexShader,fragmentShader;
+	//auto [vsContext,vsSize] = fileMapBuf("shaders/tri.vert.spv"); //c++1z
+	auto vsContext = fileMapBuf("shaders/tri.vert.spv"); //c++1z
+	vk::ShaderModuleCreateInfo vertexShaderInfo{
+		vk::ShaderModuleCreateFlags(),
+		vsContext.second,
+		static_cast<const uint32_t*>(vsContext.first.get())
+	};
+
+	auto vertexShader = createShaderModule(vertexShaderInfo);
+	auto fsContext = fileMapBuf("shaders/tri.frag.spv"); 
+	vk::ShaderModuleCreateInfo fragmentShaderInfo{
+		vk::ShaderModuleCreateFlags(),
+		fsContext.second,
+		static_cast<const uint32_t*>(fsContext.first.get())
+	};
+	
+	auto fragmentShader = createShaderModule(fragmentShaderInfo);
 	vk::PipelineShaderStageCreateInfo pipelineShaderStageCreateInfo[2]{
 		{
 			vk::PipelineShaderStageCreateFlags(),

@@ -6,7 +6,7 @@ set (VERSION_MAJOR 0)
 set (VERSION_MINOR 1)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
-set(CMAKE_CXX_FLAGS "-Wall -std=c++1y")
+set(CMAKE_CXX_FLAGS "-Wall -std=c++1z")
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(WL wayland-client)
@@ -18,7 +18,7 @@ add_executable(vkt
 	vkbuf.cc
 	fmap.cc
 	main.cc
-	)
+)
 
 target_link_libraries(vkt
 	${WL_LIBRARIES}
@@ -27,7 +27,12 @@ target_link_libraries(vkt
 )
 
 
-set(GLSL_VALIDATOR "glslangValidator")
+set(GLSL_VALIDATOR glslangValidator)
+
+set(GLSL_SOURCE_FILES
+	${PROJECT_SOURCE_DIR}/shaders/tri.frag
+	${PROJECT_SOURCE_DIR}/shaders/tri.vert
+)
 
 foreach(GLSL ${GLSL_SOURCE_FILES})
 	get_filename_component(FILE_NAME ${GLSL} NAME)

@@ -22,6 +22,7 @@ std::pair<FileMap,size_t> fileMapBuf(const char* fileName)
 		},
 		fileStat.st_size
 	};
+	std::cout<<"mmap"<<fileStat.st_size<<'\n';
 	close(fd);
 	return bufPair;
 }
