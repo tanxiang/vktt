@@ -4,12 +4,15 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/mman.h>
+#include <system_error>
 
 namespace tt{
 
 std::pair<FileMap,size_t> fileMapBuf(const char* fileName)
 {
 	auto fd = open(fileName, O_RDONLY);
+	//if(fd<=0)
+		//throw std::system_error ( std::string{fileName});
 	struct stat fileStat;
 	fstat(fd, &fileStat);
 	auto bufPair = std::pair<FileMap,size_t> {
