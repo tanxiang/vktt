@@ -167,7 +167,9 @@ void Device::createGraphicsPipelineHelper(){
 		&pipelineDynamicStateCreateInfo,
 		pipelineLayout,
 		renderPass,
-		0,VK_NULL_HANDLE,0
+		0,
+		vk::Pipeline(),
+		0
 	};
 	auto graphicsPipeline = createGraphicsPipelines(pipelineCache,pipelineCreateInfo);
 }
