@@ -6,7 +6,12 @@ set (VERSION_MAJOR 0)
 set (VERSION_MINOR 1)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
-set(CMAKE_CXX_FLAGS "-Wall -std=c++1z")
+set(CMAKE_CXX_FLAGS "-Wall -std=c++1y")
+
+if (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
+	add_definitions (-DCMAKE_CXX_COMPILER_ARG1=-std=c++1y)
+	add_definitions (-DCMAKE_ECLIPSE_GENERATE_SOURCE_PROJECT=TRUE)
+endif (${CMAKE_EXTRA_GENERATOR} MATCHES "Eclipse CDT4")
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(WL wayland-client)
