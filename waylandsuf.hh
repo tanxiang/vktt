@@ -8,8 +8,6 @@
 
 namespace toolkit{
 
-
-
 	class Window{
 		wl_display *m_display;
 		wl_surface *m_surface;
@@ -78,11 +76,22 @@ namespace toolkit{
 		auto dispatch(){
 			return wl_display_dispatch(&*display);
 		}
+		auto dispatch_pending(){
+		wl_display_flush(&*display);
+			return wl_display_dispatch_pending(&*display);
+		}
+
 		auto roundtrip(){
 			return wl_display_roundtrip(&*display);
 		}
 		auto get_registry(){
 			return wl_display_get_registry(&*display);
+		}
+		auto read_events()
+		{
+			if (wl_display_prepare_read(&*display) != -1) {
+				wl_display_read_events(&*display);
+			}
 		}
 
 		void global(wl_registry *reg, uint32_t id, const char *interface, uint32_t version)
@@ -115,8 +124,10 @@ namespace toolkit{
 		}
 
 		auto run(){
-			while( dispatch()!=-1)
-				;
+			do{
+				dispatch_pending();
+				read_events();
+			}while(true);
 		}
 		
 		auto get(){

@@ -30,7 +30,7 @@ Window::Window(wl_display *display,wl_surface *surface,wl_shell_surface *shell_s
 	wl_shell_surface_add_listener(m_shell_surface, &shell_surface_listener,this);
 	wl_surface_add_listener(m_surface,nullptr,this);
 	static const wl_callback_listener frame_listener = {
-		wrapInterface(&Window::frame_callback),
+		wrapInterface(&Window::frame_callback)
 	};
 	wl_callback_add_listener(m_frame_callback, &frame_listener, this);
 }
@@ -44,7 +44,7 @@ Display::Display(){
 	};
 	wl_registry_add_listener(get_registry(),&registry_listener,this);
 	dispatch();
-			roundtrip();
+	roundtrip();
 }
 
 }//namespace
