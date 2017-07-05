@@ -3,6 +3,7 @@
 #include "vk.hh"
 #include "fmap.hh"
 #include <experimental/filesystem>
+
 namespace fs = std::experimental::filesystem;
 
 namespace tt{
@@ -73,7 +74,7 @@ void Device::createGraphicsPipelineHelper(){
 	
 	//vk::ShaderModule vertexShader,fragmentShader;
 	//auto [vsContext,vsSize] = fileMapBuf("shaders/tri.vert.spv"); //c++1z
-	auto vsContext = fileMapBuf("shaders/tri.vert.spv"); //c++1z
+	auto vsContext = fileMapBuf("shaders/tri.vert.spv");
 	vk::ShaderModuleCreateInfo vertexShaderInfo{
 		vk::ShaderModuleCreateFlags(),
 		vsContext.second,
@@ -235,7 +236,6 @@ Device::Device(PhysicalDevice& pD,vk::Device&& device,vk::SurfaceKHR& surface,vk
 			}
 		};
 		imageViews.emplace_back(createImageView(imageViewCreateInfo));
-		
 		vk::FramebufferCreateInfo framebufferCreateInfo{
 			vk::FramebufferCreateFlags(),renderPass,1,&*imageViews.rbegin(),1024,768,1
 		};

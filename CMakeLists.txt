@@ -1,12 +1,12 @@
 cmake_minimum_required (VERSION 3.0)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 project (vkt)
 set (VERSION_MAJOR 0)
 set (VERSION_MINOR 1)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
-set(CMAKE_CXX_FLAGS "-Wall -std=c++1z")
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(WL wayland-client)
