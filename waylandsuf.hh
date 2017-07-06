@@ -74,23 +74,23 @@ namespace toolkit{
 		wl_seat *m_seat;
 		protected:
 		auto dispatch(){
-			return wl_display_dispatch(&*display);
+			return wl_display_dispatch(display.get());
 		}
 		auto dispatch_pending(){
-		wl_display_flush(&*display);
-			return wl_display_dispatch_pending(&*display);
+		wl_display_flush(display.get());
+			return wl_display_dispatch_pending(display.get());
 		}
 
 		auto roundtrip(){
-			return wl_display_roundtrip(&*display);
+			return wl_display_roundtrip(display.get());
 		}
 		auto get_registry(){
-			return wl_display_get_registry(&*display);
+			return wl_display_get_registry(display.get());
 		}
 		auto read_events()
 		{
-			if (wl_display_prepare_read(&*display) != -1) {
-				wl_display_read_events(&*display);
+			if (wl_display_prepare_read(display.get()) != -1) {
+				wl_display_read_events(display.get());
 			}
 		}
 
@@ -120,7 +120,7 @@ namespace toolkit{
 		Display(const Display &) = delete;
 		auto CreateWindow(){
 			auto surface = wl_compositor_create_surface(m_compositor);
-			return Window{&*display,surface,wl_shell_get_shell_surface(m_shell,surface)};
+			return Window{display.get(),surface,wl_shell_get_shell_surface(m_shell,surface)};
 		}
 
 		auto run(){
